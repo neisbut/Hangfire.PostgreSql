@@ -20,30 +20,15 @@
 //    Special thanks goes to him.
 
 using System;
-using System.Data;
 
-namespace Hangfire.PostgreSql
+namespace Hangfire.PostgreSql.Entities
 {
-    internal class PostgreSqlJobQueueProvider : IPersistentJobQueueProvider
+    internal class SqlState
     {
-        private readonly PostgreSqlStorageOptions _options;
-
-        public PostgreSqlJobQueueProvider(PostgreSqlStorageOptions options)
-        {
-            if (options == null) throw new ArgumentNullException(nameof(options));
-            _options = options;
-        }
-
-        public PostgreSqlStorageOptions Options { get { return _options; } }
-
-        public IPersistentJobQueue GetJobQueue(IDbConnection connection)
-        {
-            return new PostgreSqlJobQueue(connection, _options);
-        }
-
-        public IPersistentJobQueueMonitoringApi GetJobQueueMonitoringApi(IDbConnection connection)
-        {
-            return new PostgreSqlJobQueueMonitoringApi(connection, _options);
-        }
+        public int JobId { get; set; }
+        public string Name { get; set; }
+        public string Reason { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public string Data { get; set; }
     }
 }

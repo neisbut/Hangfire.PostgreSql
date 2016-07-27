@@ -20,30 +20,45 @@
 //    Special thanks goes to him.
 
 using System;
-using System.Data;
 
 namespace Hangfire.PostgreSql
 {
-    internal class PostgreSqlJobQueueProvider : IPersistentJobQueueProvider
-    {
-        private readonly PostgreSqlStorageOptions _options;
+	public class PostgreSqlStorageOptions
+	{
+		private TimeSpan _queuePollInterval;
 
-        public PostgreSqlJobQueueProvider(PostgreSqlStorageOptions options)
-        {
-            if (options == null) throw new ArgumentNullException(nameof(options));
-            _options = options;
-        }
+		public PostgreSqlStorageOptions()
+		{
+			QueuePollInterval = TimeSpan.FromSeconds(15);
+			InvisibilityTimeout = TimeSpan.FromMinutes(30);
+			SchemaName = "hangfire";
+			UseNativeDatabaseTransactions = true;
+			PrepareSchemaIfNecessary = true;
+		}
 
-        public PostgreSqlStorageOptions Options { get { return _options; } }
+		public TimeSpan QueuePollInterval
+		{
+			get { return _queuePollInterval; }
+			set
+			{
+				var message = $"The QueuePollInterval property value should be positive. Given: {value}.";
 
-        public IPersistentJobQueue GetJobQueue(IDbConnection connection)
-        {
-            return new PostgreSqlJobQueue(connection, _options);
-        }
+				if (value == TimeSpan.Zero)
+				{
+					throw new ArgumentException(message, nameof(value));
+				}
+				if (value != value.Duration())
+				{
+					throw new ArgumentException(message, nameof(value));
+				}
 
-        public IPersistentJobQueueMonitoringApi GetJobQueueMonitoringApi(IDbConnection connection)
-        {
-            return new PostgreSqlJobQueueMonitoringApi(connection, _options);
-        }
-    }
+				_queuePollInterval = value;
+			}
+		}
+
+		public TimeSpan InvisibilityTimeout { get; set; }
+		public bool UseNativeDatabaseTransactions { get; set; }
+		public bool PrepareSchemaIfNecessary { get; set; }
+		public string SchemaName { get; set; }
+	}
 }

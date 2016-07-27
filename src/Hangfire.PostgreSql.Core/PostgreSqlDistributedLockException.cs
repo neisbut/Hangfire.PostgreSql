@@ -1,5 +1,5 @@
-﻿// This file is part of Hangfire.PostgreSql.
-// Copyright © 2014 Frank Hommers <http://hmm.rs/Hangfire.PostgreSql>.
+// This file is part of Hangfire.PostgreSql.
+// Copyright � 2014 Frank Hommers <http://hmm.rs/Hangfire.PostgreSql>.
 // 
 // Hangfire.PostgreSql is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as 
@@ -20,30 +20,14 @@
 //    Special thanks goes to him.
 
 using System;
-using System.Data;
 
 namespace Hangfire.PostgreSql
 {
-    internal class PostgreSqlJobQueueProvider : IPersistentJobQueueProvider
+    internal class PostgreSqlDistributedLockException : Exception
     {
-        private readonly PostgreSqlStorageOptions _options;
-
-        public PostgreSqlJobQueueProvider(PostgreSqlStorageOptions options)
+        public PostgreSqlDistributedLockException(string message)
+            : base(message)
         {
-            if (options == null) throw new ArgumentNullException(nameof(options));
-            _options = options;
-        }
-
-        public PostgreSqlStorageOptions Options { get { return _options; } }
-
-        public IPersistentJobQueue GetJobQueue(IDbConnection connection)
-        {
-            return new PostgreSqlJobQueue(connection, _options);
-        }
-
-        public IPersistentJobQueueMonitoringApi GetJobQueueMonitoringApi(IDbConnection connection)
-        {
-            return new PostgreSqlJobQueueMonitoringApi(connection, _options);
         }
     }
 }
